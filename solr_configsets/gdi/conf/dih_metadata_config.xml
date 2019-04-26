@@ -1,0 +1,15 @@
+<dataConfig>
+    <dataSource driver="org.postgresql.Driver" url="jdbc:postgresql://localhost/soconfig" user="postgres" password="admin1234" />
+    <document>
+        <entity name="dataproduct" query="SELECT id, display, dset_children, dset_info, search_1, search_2, search_3, superclass FROM gdi_knoten.dataprod_solr_v;">
+            <field column="id" name="id" />
+            <field column="display" name="display" />            
+            <field column="dset_children" name="dset_children" />
+            <field column="dset_info" name="dset_info" />
+            <field column="search_1" name="search_1" />
+            <field column="search_2" name="search_2" />
+            <field column="search_3" name="search_3" />
+            <field column="superclass" name="superclass" />
+        </entity>
+    </document>
+</dataConfig>

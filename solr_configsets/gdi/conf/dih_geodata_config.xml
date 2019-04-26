@@ -1,0 +1,20 @@
+<dataConfig>
+    <dataSource driver="org.postgresql.Driver" url="jdbc:postgresql://localhost/postgres" user="postgres" password="postgres" />
+    <document>
+        <entity name="mapobj" query="SELECT id, display, search_1, search_3, sort, superclass FROM mapobj_v;">
+            <field column="id" name="id" />
+            <field column="display" name="display" />            
+            <field column="search_1" name="search_1" />
+            <field column="search_3" name="search_3" />
+	    <field column="sort" name="sort" />
+            <field column="superclass" name="superclass" />
+        </entity>
+        <entity name="fill_700k" query="SELECT id, display, search_1, search_3, superclass FROM public.fill_700k_v;">
+            <field column="id" name="id" />
+            <field column="display" name="display" />            
+            <field column="search_1" name="search_1" />
+            <field column="search_3" name="search_3" />
+            <field column="superclass" name="superclass" />
+        </entity>
+    </document>
+</dataConfig>
