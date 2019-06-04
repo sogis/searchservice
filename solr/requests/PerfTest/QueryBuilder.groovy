@@ -1,6 +1,7 @@
 public class QueryBuilder {
 
 	private static String FIELD_PRENAME = "search_";
+	private static String NGRAM_SUFFIX = "_ngram";
 	private static int NUM_FIELDS = 3;
 	private String[] tokens = null;
 
@@ -49,11 +50,13 @@ public class QueryBuilder {
 
 	private static String buildQueryFragment(int fieldSuffix, String token){
 
-		String fieldName = QueryBuilder.FIELD_PRENAME + Integer.toString(fieldSuffix);
+		String fieldNameExact = QueryBuilder.FIELD_PRENAME + Integer.toString(fieldSuffix);
+		String fieldNameNgram = fieldNameExact + QueryBuilder.NGRAM_SUFFIX;
+
 		int exactMatchWeight = (QueryBuilder.NUM_FIELDS - fieldSuffix + 1) * 2;
 		int fuzzyMatchWeight = exactMatchWeight - 1;
 
-		String queryFragment = "(" + fieldName + ":" + token + "^" + exactMatchWeight + " OR " + fieldName + ":*" + token + "*^" + fuzzyMatchWeight + ")";
+		String queryFragment = "(" + fieldNameExact + ":" + token + "^" + exactMatchWeight + " OR " + fieldNameNgram + ":" + token + "^" + fuzzyMatchWeight + ")";
 
 		return queryFragment;
 	}
