@@ -14,13 +14,13 @@ start=`date +%s%3N`
 
 curl -v -G \
 --data-urlencode "omitHeader=true" \
---data-urlencode "fq=(superclass:dataproduct OR superclass:ch.so.agi.av.grundstuecke.rechtskraeftig OR superclass:ch.so.agi.av.gebaeudeadressen.gebaeudeeingaenge)" \
---data-urlencode "q=( (search_1:$1^6 OR search_1:*$1*^5) AND (search_1:$2^6 OR search_1:*$2*^5) AND (search_1:$3^6 OR search_1:*$3*^5) )" \
---data-urlencode "OR ( (search_2:$1^4 OR search_2:*$2*^3) AND (search_2:$2^4 OR search_2:*$2*^3) AND (search_2:$3^4 OR search_2:*$3*^3) )" \
---data-urlencode "OR ( (search_3:$1^2 OR search_3:*$2*^1) AND (search_3:$2^2 OR search_3:*$2*^1) AND (search_3:$3^2 OR search_3:*$3*^1) )" \
+--data-urlencode "fq=(facet:dataproduct OR facet:ch.so.agi.av.grundstuecke.rechtskraeftig OR facet:ch.so.agi.av.gebaeudeadressen.gebaeudeeingaenge)" \
+--data-urlencode "q=( (search_1_stem:$1^6 OR search_1_ngram:$1^5) AND (search_1_stem:$2^6 OR search_1_ngram:$2^5) AND (search_1_stem:$3^6 OR search_1_ngram:$3^5) )" \
+--data-urlencode "OR ( (search_2_stem:$1^4 OR search_2_ngram:$2^3) AND (search_2_stem:$2^4 OR search_2_ngram:$2^3) AND (search_2_stem:$3^4 OR search_2_ngram:$3^3) )" \
+--data-urlencode "OR ( (search_3_stem:$1^2 OR search_3_ngram:$2^1) AND (search_3_stem:$2^2 OR search_3_ngram:$2^1) AND (search_3_stem:$3^2 OR search_3_ngram:$3^1) )" \
 --data-urlencode "fl=display" \
 --data-urlencode "facet=true" \
---data-urlencode "facet.field=superclass" \
+--data-urlencode "facet.field=facet" \
 http://localhost:8983/solr/gdi/select
 
 end=`date +%s%3N`

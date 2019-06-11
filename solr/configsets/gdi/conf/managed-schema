@@ -109,23 +109,24 @@
          WARNING: The _text_ catch-all field will significantly increase your index size.
          If you don't need it, consider removing it and the corresponding copyField directive.
     -->
-<field name="superclass" type="string" indexed="true" required="true" stored="true" multiValued="false"/>
+<field name="facet" type="string" indexed="true" required="true" stored="true" multiValued="false"/>
 <field name="display" type="string" indexed="false" required="true" stored="true" multiValued="false"/>
+<field name="idfield_meta" type="string" indexed="false" required="false" stored="true" multiValued="false"/>
 <field name="dset_children" type="string" indexed="false" required="false" stored="true" multiValued="false"/>
 <field name="dset_info" type="boolean" indexed="false" required="false" stored="true" multiValued="false"/>
 <field name="id" type="string" indexed="true" required="true" stored="true" multiValued="false"/>
 <field name="sort" type="string" indexed="false" required="false" stored="true" multiValued="false"/>
-<field name="search_1" type="text_de" indexed="true" required="true" stored="false" multiValued="false"/>
-<field name="search_2" type="text_de" indexed="true" required="false" stored="false" multiValued="false"/>
-<field name="search_3" type="text_de" indexed="true" required="true" stored="false" multiValued="false"/>
+<field name="search_1_stem" type="text_de" indexed="true" required="true" stored="false" multiValued="false"/>
+<field name="search_2_stem" type="text_de" indexed="true" required="false" stored="false" multiValued="false"/>
+<field name="search_3_stem" type="text_de" indexed="true" required="false" stored="false" multiValued="false"/>
 
 <field name="search_1_ngram" type="text_de_ngram" indexed="true" required="true" stored="false" multiValued="false"/>
 <field name="search_2_ngram" type="text_de_ngram" indexed="true" required="false" stored="false" multiValued="false"/>
-<field name="search_3_ngram" type="text_de_ngram" indexed="true" required="true" stored="false" multiValued="false"/>
+<field name="search_3_ngram" type="text_de_ngram" indexed="true" required="false" stored="false" multiValued="false"/>
 
-<copyField source="search_1" dest="search_1_ngram"/>
-<copyField source="search_2" dest="search_2_ngram"/>
-<copyField source="search_3" dest="search_3_ngram"/>
+<copyField source="search_1_stem" dest="search_1_ngram"/>
+<copyField source="search_2_stem" dest="search_2_ngram"/>
+<copyField source="search_3_stem" dest="search_3_ngram"/>
 
 <!-- Folgend von Solr verlangte Felder  -->
 <field name="_version_" type="plong" indexed="false" stored="false"/>
