@@ -1,3 +1,7 @@
+# Folder to ignore
+**/tmp
+**/pgdata
+
 # Compiled class file
 *.class
 
