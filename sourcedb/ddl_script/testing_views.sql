@@ -78,7 +78,7 @@ SELECT
     part_1 || ' ' || part_2 AS search_2_stem,
     part_1 AS sort,
     subclass AS facet,
-    (array_to_json(array_append(ARRAY['t_id'::text], 'str:n'::text)))::text AS idfield_meta
+    (array_to_json(array_append(ARRAY['t_ili_tid'::text], 'str:y'::text)))::text AS idfield_meta
 FROM
     index_base
 ;
@@ -170,7 +170,7 @@ SELECT
     part_1 || ' ' || part_2 AS search_2_stem,
     part_1 AS sort,
     subclass AS facet,
-    (array_to_json(array_append(ARRAY['t_id'::text], 'str:y'::text)))::text AS idfield_meta
+    (array_to_json(array_append(ARRAY['t_id'::text], 'str:n'::text)))::text AS idfield_meta
 FROM
     index_base
 ;
