@@ -1,5 +1,13 @@
---CREATE OR REPLACE VIEW gdi_knoten.dataproduct_solr_v AS
-WITH 
+
+/*
+ * ZU BEACHTEN:
+ * Die View referenziert die WMS und WFS-Root Layer über
+ * deren ids 2 und 4. 
+ * Grund: Zum Zeitpukt der Viewerstellung existiert
+ * für diese keine nutzbaren stabilen Identifikatoren.
+ */
+CREATE OR REPLACE VIEW gdi_knoten.dataproduct_solr_v AS
+WITH
 /*
  * Liefert die Organisationsnamen aller Kontakte.
  * 
@@ -82,7 +90,7 @@ dataproduct AS (
     LEFT OUTER JOIN
     	resource_owner_orgs ON ows_layer.gdi_oid = resource_owner_orgs.gdi_oid_resource
     WHERE
-        name != 'somap'
+        ows_layer.gdi_oid NOT IN (2,4)
 ), 
 /*
  * Liefert alle zu einem productset zugehörigen Kinder
@@ -180,18 +188,71 @@ layergroup AS (
 		subclass = 'layergroup'
 ),
 /*
- * orphans liefert dataproducts, welche in keinem
- * Parent-Productset enthalten sind ("Headless").
+ * Sagt aus, ob für das dataproduct ein oder mehrere parents
+ * existieren, und ob unter den parents ein facadelayer ist.
  */
-orphans AS (
+parent_ps_info AS (
+	SELECT 
+		group_layer.gdi_oid_sub_layer,
+		max(ows_layer_group.facade::int) AS has_facade_parent
+	FROM
+		gdi_knoten.ows_layer_group
+			INNER JOIN gdi_knoten.group_layer ON ows_layer_group.gdi_oid = group_layer.gdi_oid_group_layer
+	WHERE 
+		gdi_oid NOT IN (2,4)
+	GROUP BY
+		group_layer.gdi_oid_sub_layer
+),
+/*
+ * Alle dataproducts, welche 
+ * das Flag "in WMS verfügbar"
+ * gesetzt haben.
+ */
+wms_flagged_dataproducts AS (
+	SELECT
+		gdi_oid_sub_layer AS gdi_oid_in_wms
+	FROM
+		gdi_knoten.group_layer
+	WHERE 
+		group_layer.gdi_oid_group_layer = 2
+),
+/*
+ * Gibt im attribut stands_alone an, ob ein dataproduct aufgrund
+ * seiner Konfiguration als separates Dokument indexiert wird oder nicht.
+ */
+standalone_dataproduct AS (
+	SELECT
+		ows_layer.gdi_oid,
+		CASE
+			WHEN has_facade_parent IS NULL AND gdi_oid_in_wms IS NOT NULL THEN TRUE --kein parent
+			WHEN has_facade_parent IS NULL AND gdi_oid_in_wms IS NULL THEN FALSE -- z.B: .data
+			WHEN has_facade_parent = 1 AND gdi_oid_in_wms IS NOT NULL THEN TRUE 
+			WHEN has_facade_parent = 0 THEN FALSE --layergroup als parent
+			ELSE NULL
+		END AS stands_alone,
+		parent_ps_info.has_facade_parent
+	FROM 
+		gdi_knoten.ows_layer
+			LEFT OUTER JOIN
+				wms_flagged_dataproducts ON ows_layer.gdi_oid = wms_flagged_dataproducts.gdi_oid_in_wms
+			LEFT OUTER JOIN 
+				parent_ps_info ON ows_layer.gdi_oid = parent_ps_info.gdi_oid_sub_layer
+),
+/*
+ * Liefert facadelayer und datasetviews, welche als für sich stehende Dokumente
+ * in den Solr index aufgenommen werden.
+ */
+singlerow_standalone AS (
     SELECT
         dataproduct.*
     FROM
         dataproduct
-    	LEFT OUTER JOIN
-    		productset_childrenids ON dataproduct.gdi_oid = productset_childrenids.child_gdi_oid
+    	INNER JOIN 
+    		standalone_dataproduct ON dataproduct.gdi_oid = standalone_dataproduct.gdi_oid
     WHERE 
-    	productset_childrenids.child_gdi_oid IS NULL
+    	dataproduct.subclass != 'layergroup'
+    		AND
+    			standalone_dataproduct.stands_alone = true
 ),
 /*
  * dataproduct_union vereinigt alle notwendigen Felder in eine
@@ -230,16 +291,15 @@ dataproduct_union AS (
         NULL AS children_keywords_agg,
         NULL AS children_desc_org_agg
     FROM
-        orphans
+        singlerow_standalone
 )
 
 /*
  * Denormalisiert die Spalten auf die notwendigen
  * Spalten des generischen tabellenübergreifenden Solr-Index.
  */
-/*
 SELECT
-    (array_to_json(array_append(ARRAY[subclass::text], ident::text)))::text AS id,
+    (array_to_json(ARRAY[subclass::text, ident::TEXT]))::text AS id,
     display,
     children_json_array::text AS dset_children,
     dset_info,
@@ -251,13 +311,6 @@ SELECT
 FROM
     dataproduct_union
 ;
-*/
-
---SELECT * FROM dataproduct WHERE display LIKE '%Gemeind%'
-
--- SELECT * FROM productset_childrenids WHERE child_gdi_oid = 11
-
-SELECT * FROM dataproduct WHERE gdi_oid = 2515
 
 /*
  * Tests:
@@ -266,6 +319,8 @@ SELECT * FROM dataproduct WHERE gdi_oid = 2515
  * - Datasetview als Waise: WHERE display LIKE '%Baugrund%'
  * - Dataserview mit Parent: WHERE children_json_array::text LIKE '%Pleisto%'
  * - Layergroup: WHERE display LIKE '%Geol%' 
+ * 
+ * - Prüfperimeter Bodenabtrag
  */
 
 
