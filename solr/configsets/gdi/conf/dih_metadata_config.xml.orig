@@ -1,5 +1,5 @@
 <dataConfig>
-    <dataSource driver="org.postgresql.Driver" url="jdbc:postgresql://geodb-t.rootso.org/soconfig" user="sogis_service" password="yDOG6zBlPlSYGgVg9Vun" />
+    <dataSource driver="org.postgresql.Driver" url="jdbc:postgresql://geodb-t.rootso.org/soconfig&sslmode=require" user="user" password="password" />
     <document>
         <entity name="dataproduct" query="SELECT * FROM gdi_knoten.dataproduct_solr_v">         
             <field column="search_1_stem" name="search_1_stem" />
