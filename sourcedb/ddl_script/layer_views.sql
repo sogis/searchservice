@@ -6,7 +6,7 @@
  * Grund: Zum Zeitpukt der Viewerstellung existiert
  * für diese keine nutzbaren stabilen Identifikatoren.
  */
-CREATE OR REPLACE VIEW gdi_knoten.dataproduct_solr_v AS
+CREATE OR REPLACE VIEW gdi_knoten.layer_base_solr_v AS
 WITH
 /*
  * Liefert die Organisationsnamen aller Kontakte.
@@ -322,6 +322,31 @@ FROM
  * 
  * - Prüfperimeter Bodenabtrag
  */
+
+/*
+ * View für das Indexieren der für WGC und Qgis Desktop
+ * relevanten layer
+ */
+CREATE OR REPLACE VIEW gdi_knoten.layer_dataproduct_solr_v AS
+SELECT
+	*
+FROM
+	gdi_knoten.layer_base_solr_v
+WHERE
+	facet = 'dataproduct'
+	
+	
+/*
+ * View für das Indexieren der nur für Qgis Desktop
+ * zusätzlich relevanten Hintergrundebenen
+ */
+CREATE OR REPLACE VIEW gdi_knoten.layer_background_solr_v AS
+SELECT
+	*
+FROM
+	gdi_knoten.layer_base_solr_v
+WHERE
+	facet = 'background'
 
 
 
