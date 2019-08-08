@@ -334,6 +334,7 @@ FROM
 	gdi_knoten.layer_base_solr_v
 WHERE
 	facet = 'dataproduct'
+;
 	
 	
 /*
@@ -347,23 +348,4 @@ FROM
 	gdi_knoten.layer_base_solr_v
 WHERE
 	facet = 'background'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+;
