@@ -79,8 +79,8 @@ dataproduct AS (
         keywords,
         CONCAT_WS(', ', description, org_name) AS desc_org, 
         CASE 
-            WHEN description IS NULL THEN FALSE
-            WHEN TRIM(description) = '' THEN FALSE
+            WHEN ows_metadata IS NULL THEN FALSE
+            WHEN TRIM(ows_metadata) = '' THEN FALSE
             ELSE TRUE
         END AS dset_info
     FROM 
