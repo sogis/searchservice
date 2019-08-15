@@ -91,6 +91,8 @@ dataproduct AS (
     	resource_owner_orgs ON ows_layer.gdi_oid = resource_owner_orgs.gdi_oid_resource
     WHERE
         ows_layer.gdi_oid NOT IN (2,4)
+        AND
+		    name NOT IN ('ch.so.afu.baugk.geschaefte')  /* Weitere folgen in Kuerze --> NOT IN */
 ), 
 /*
  * Liefert alle zu einem productset zugehörigen Kinder
