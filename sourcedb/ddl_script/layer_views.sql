@@ -9,27 +9,37 @@
 CREATE OR REPLACE VIEW gdi_knoten.layer_base_solr_v AS
 WITH
 /*
+ * Liefert die Namen (Name, Kuerzel) der Organisationen
+ */
+orgnames AS (
+	SELECT
+		organisation.id,
+		concat_ws(' ', contact.name, organisation.abbreviation) AS org_names
+	FROM
+		contacts.organisation
+	INNER JOIN 
+		contacts.contact ON organisation.id = contact.id
+),
+/*
  * Liefert die Organisationsnamen aller Kontakte.
  * 
  * Bei Kontakttyp 'organisation' direkt, bei Kontakttyp
  * 'person' über die der Person zugeordnete Organisation.
  */
-orgnames AS (
+contact_orgnames AS (
 	SELECT
 		id,
-		name
+		org_names
 	FROM
-		contacts.contact
-	WHERE  
-		lower(TYPE::text) = 'organisation'
+		orgnames
 	UNION ALL
 	SELECT
 		pers.id,
-		org.name
+		orgnames.org_names
 	FROM
 		contacts.contact AS pers
 		INNER JOIN 
-			contacts.contact AS org ON pers.id_organisation = org.id
+			orgnames ON pers.id_organisation = orgnames.id
 	WHERE  
 		lower(pers.TYPE::text) = 'person'
 ),
@@ -40,13 +50,13 @@ orgnames AS (
 resource_owner_orgs AS (
 	SELECT
 		gdi_oid_resource,
-		name AS org_name
+		org_names
 	FROM
 		contacts.resource_contact
 	INNER JOIN
 		contacts.contact_role ON resource_contact.id_contact_role = contact_role.id
 	INNER JOIN
-		orgnames ON resource_contact.id_contact = orgnames.id
+		contact_orgnames ON resource_contact.id_contact = contact_orgnames.id
 	WHERE 
 		LOWER(contact_role.type) = 'datenherr'
 ),
@@ -77,7 +87,7 @@ dataproduct AS (
         title AS display,
         synonyms,
         keywords,
-        CONCAT_WS(', ', description, org_name) AS desc_org, 
+        CONCAT_WS(', ', description, org_names) AS desc_org, 
         CASE 
             WHEN ows_metadata IS NULL THEN FALSE
             WHEN TRIM(ows_metadata) = '' THEN FALSE
@@ -337,7 +347,6 @@ FROM
 WHERE
 	facet = 'dataproduct'
 ;
-	
 	
 /*
  * View für das Indexieren der nur für Qgis Desktop
