@@ -23,7 +23,7 @@ curl -v -G \
 --data-urlencode "facet.field=facet" \
 --data-urlencode "start=0" \
 --data-urlencode "rows=20" \
-http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/select
+http://solr-headless-solr-cloud-integration.dev.so.ch/solr/gdi/select
 
 end=`date +%s%3N`
 millis=`expr $end - $start`

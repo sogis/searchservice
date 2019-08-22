@@ -86,8 +86,8 @@ dataproduct AS (
         name AS ident,
         title AS display,
         synonyms,
-        keywords,
-        CONCAT_WS(', ', description, org_names) AS desc_org, 
+        CONCAT_WS(', ', keywords, 'karte', 'ebene', 'layer') AS keywords,
+        CONCAT_WS(', ', ows_metadata, org_names) AS desc_org, 
         CASE 
             WHEN ows_metadata IS NULL THEN FALSE
             WHEN TRIM(ows_metadata) = '' THEN FALSE
@@ -159,7 +159,9 @@ children_with_parents_json AS (
             dset_info,
             gdi_oid_group_layer AS gid
         FROM
-            children_with_parents            
+            children_with_parents       
+        ORDER BY
+        	layer_order
     ) t 
     GROUP BY gid
 ),
@@ -322,6 +324,7 @@ SELECT
     facet
 FROM
     dataproduct_union
+WHERE children_desc_org_agg::text LIKE '%asleit%'
 ;
 
 /*
