@@ -324,7 +324,6 @@ SELECT
     facet
 FROM
     dataproduct_union
-WHERE children_desc_org_agg::text LIKE '%asleit%'
 ;
 
 /*
