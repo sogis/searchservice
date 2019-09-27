@@ -261,7 +261,7 @@ dataproduct AS (
 	        	'ch.so.agi.hintergrundkarte_ortho', 
 	        	'ch.so.agi.hintergrundkarte_sw') 
 	        		THEN 'background'
-	        ELSE 'dataproduct'
+	        ELSE 'foreground'
 	    END AS facet,
         CASE facade
             WHEN TRUE THEN 'facadelayer'
@@ -536,7 +536,7 @@ SELECT
 FROM
 	gdi_knoten.layer_base_solr_v
 WHERE
-	facet = 'dataproduct'
+	facet = 'foreground'
 ;
 	
 /*
